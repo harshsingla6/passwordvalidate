@@ -23,26 +23,30 @@ connection
   email : sequelize.STRING,
   password : sequelize.INTEGER
   });
-  //  console.log(user.email, user.password)
+  //  console.log(user.email, user.password
 
-// sequelize.sync
-
-  // connection.sync()
-
-  const validatePassword = (emailId) =>{
-    var password = 12345
-    user.findOne({where:{email: emailId , password: password}})
-    .then(results => {
-        console.log("true")
-        console.log(results)
-        //   return users
+  const validatePassword = (emailId, userPassword) =>{
+    user.findOne({
+      attributes : ["email"],
+      where:{email : emailId , password : userPassword },
+      raw:true
+    })
+    .then(data => {
+       if(data == null){
+        // console.log(data)
+        console.log("false")
+          // return data
+       }
+       else{
+         console.log("true")
+       }
     })
     .catch(error => {
         console.log("false")
-        return error
+        console.log(error)
     })
    }
-   validatePassword("harshsingla1.@gmail.com")
+   validatePassword("harshsingla1.@gmail.com" , 1345)
 
 app.listen(port ,()=>{
  console.log("server is running at port 8000")
