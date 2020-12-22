@@ -7,8 +7,8 @@ const app = express();
 const port = 5000;
 app.use(bodyparser.json())
 
-const connection = new sequelize('cartdb','root','root',{
-    dialect : 'mysql'
+const connection = new sequelize('cartdb', 'root', 'root', {
+  dialect: 'mysql'
 })
 connection
   .authenticate()
@@ -18,36 +18,44 @@ connection
   .catch(err => {
     console.error('Unable to connect to the database:', err);
   });
- 
-  const user = connection.define("table1", {
-  email : sequelize.STRING,
-  password : sequelize.INTEGER
-  });
-  //  console.log(user.email, user.password
 
-  const validatePassword = (emailId, userPassword) =>{
+const user = connection.define("table1", {
+  email: sequelize.STRING,
+  password: sequelize.INTEGER
+});
+
+const validatePassword = (emailId, userPassword) => {
+  console.log("Password validation")
+  return new Promise((resolve,reject)=>{
     user.findOne({
-      attributes : ["email"],
-      where:{email : emailId , password : userPassword },
-      raw:true
+      attributes: ["email"],
+      where: { email: emailId, password: userPassword },
+      raw: true
     })
     .then(data => {
-       if(data == null){
+      // if(data){
         // console.log(data)
-        console.log("false")
-          // return data
-       }
-       else{
-         console.log("true")
-       }
+      if (data == null) {
+        // console.log(data)
+        console.log("False")
+        console.log("Invalid Password")
+        // reject("Invalid password")    // data is equal to null because password condition not match
+      }
+      else {
+        console.log("true")
+        console.log("Welcome") // data is not equal to null & condition match
+        resolve(data)
+      }
+    // }
     })
     .catch(error => {
-        console.log("false")
-        console.log(error)
+      console.log("error")
+      reject(error)
     })
-   }
-   validatePassword("harshsingla1.@gmail.com" , 1345)
+  })
+}
+validatePassword("harshsingla1.@gmail.com", 12345)
 
-app.listen(port ,()=>{
- console.log("server is running at port 8000")
+app.listen(port, () => {
+  console.log("server is running at port 8000")
 })
