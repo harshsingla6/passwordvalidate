@@ -2,6 +2,7 @@ const express = require("express")
 const mysql = require("mysql")
 const sequelize = require("sequelize")
 const bodyparser = require("body-parser")
+const bcrypt = require("bcrypt")
 const app = express();
 
 const port = 5000;
@@ -29,24 +30,26 @@ const validatePassword = (emailId, userPassword) => {
   return new Promise((resolve,reject)=>{
     user.findOne({
       attributes: ["email"],
-      where: { email: emailId, password: userPassword },
+      where: { email: emailId },
       raw: true
     })
     .then(data => {
-      // if(data){
+      if(data){
+        console.log(data)
+      if (data && bcrypt.compareSync(userPassword , user.password)) {
         // console.log(data)
-      if (data == null) {
-        // console.log(data)
-        console.log("False")
-        console.log("Invalid Password")
+        console.log("true")
         // reject("Invalid password")    // data is equal to null because password condition not match
       }
       else {
-        console.log("true")
-        console.log("Welcome") // data is not equal to null & condition match
-        resolve(data)
+        console.log("false")
+       // console.log("Welcome") // data is not equal to null & condition match
+        // resolve(data)
       }
-    // }
+    }
+    else{
+      console.log("email is wrong")
+    }
     })
     .catch(error => {
       console.log("error")
@@ -54,7 +57,7 @@ const validatePassword = (emailId, userPassword) => {
     })
   })
 }
-validatePassword("harshsingla1.@gmail.com", 12345)
+validatePassword("harshsingla1.@gmail.com", 1235)
 
 app.listen(port, () => {
   console.log("server is running at port 8000")
